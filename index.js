@@ -1,4 +1,4 @@
-const bodyParser = require('body-parser');
+/*const bodyParser = require('body-parser');
 const express = require('express');
     app = express();
     bodyParser = require('body-parser'),
@@ -8,7 +8,14 @@ const express = require('express');
     //fs = require('fs'), // import built in node modules fs and path 
     //path = require('path');
 
-//const app = express();
+//const app = express();*/
+const bodyParser = require("body-parser");
+const express = require("express");
+const app = express();
+const uuid = require("uuid");
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
 
@@ -156,7 +163,7 @@ let movies = [
 
 
     // CREATE
-    app.post('/users/:id/movieTitle', (req, res) => {
+    app.post('/users/:id/:movieTitle', (req, res) => {
       const { id, movieTitle } = req.params;
   
       let user = users.find( user => user.id == id );
@@ -171,14 +178,14 @@ let movies = [
 
 
     // DELETE
-    app.delete('/users/:id/movieTitle', (req, res) => {
+    app.delete('/users/:id/:movieTitle', (req, res) => {
       const { id, movieTitle } = req.params;
   
       let user = users.find( user => user.id == id );
   
       if (user) {
         user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle);
-        res.status(200).send(`${movieTitle} has been added to user ${id}'s array`);
+        res.status(200).send(`${movieTitle} has been removed from user ${id}'s array`);
       } else {
       res.status(400).send('no such user')
       }
