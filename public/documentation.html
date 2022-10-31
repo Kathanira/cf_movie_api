@@ -4,6 +4,7 @@
          <meta charset="utf-8">
          <meta name="viewport" content="width=device-width, initial-scale=1">
          <title>Movie API Documentaion</title>
+         <link rel="stylesheet" type="text/css" href="../css/style.css">
      </head>
          <header>Movie API Documentation</header>
          <body>
@@ -29,7 +30,7 @@
 
             <h2>API Endpoints</h2>
             <table>
-                <thead>
+                <!--<thead>
                    <tr>
                        <th>Buisness Logic</th>
                        <th>URL</th>
@@ -38,9 +39,28 @@
                        <th>Request body data format</th>
                        <th>Response body data format</th>
                    </tr>
-                </thead>
+                </thead>-->
+
+
           
                 <tbody>
+                    <tr>
+                        <td>Get all Users</td>
+                        <td>/users</td>
+                        <td>GET</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td> A JSON object holding data of all users</td>
+                    </tr>
+           
+                    <tr>
+                        <td>Get a User by Username</td>
+                        <td>/users/:Username</td>
+                        <td>GET</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td> A JSON object holding data of a specific user</td>
+                    </tr>
                    <tr>
                        <td>Get a list of all movies</td>
                        <td>/movies</td>
@@ -52,9 +72,9 @@
           
                    <tr>
                        <td>Get a single movie by title</td>
-                       <td>/movies/:title</td>
+                       <td>/movies/:Title</td>
                        <td>GET</td>
-                       <td>:title</td>
+                       <td>:Title</td>
                        <td>-</td>
                        <td>A JSON object holding data about a single movie</td>
                    </tr>
@@ -82,15 +102,16 @@
                        <td>/users</td>
                        <td>POST</td>
                        <td>-</td>
-                       <td>A JSON object holding data about the users to add, structured like this { "name" : "Vincent", "favorite movie" : [] } </td>
-                       <td>A JSON object holding data about the user that was added, structured like this { "name" : "Vincent", "favorite movie" : [] } including an ID </td>
+                       <td>A JSON object holding data about the users to add, structured like this:
+                        { "Username": "String","Password": "String","Email": "String","Birthday": "Date"}</td>
+                       <td>A JSON object holding data about the user that was added, structured like this { "username" : "Test1", "Password": "1234", "Email": "testtest@gmail.com", "Birthday": "1988-08-08", "favorite movie" : [] } including an ID </td>
                    </tr>
           
                    <tr>
                        <td>Allow new users update their user info</td>
-                       <td>/users/:id</td>
+                       <td>/users/:Username</td>
                        <td>PUT</td>
-                       <td>:id</td>
+                       <td>:Username</td>
                        <td>-</td>
                        <td>A JSON object holding data about the updated information</td>
                    </tr>
@@ -98,27 +119,27 @@
           
                    <tr>
                        <td>Adds movie to favorite list</td>
-                       <td>/users/:id/:movieTitle</td>
+                       <td>/users/:Username/movies/:movieId</td>
                        <td>POST</td>
-                       <td>:movieTitle</td>
+                       <td>:Username, :MovieID</td>
                        <td>-</td>
-                       <td>A text message indicating whether the Movie was added</td>
+                       <td>A JSON Object holding data about the User and the movie that was added</td>
                    </tr>
           
                    <tr>
                        <td>Delete movie from favorite list</td>
-                       <td>/users/:id/:movieTitle</td>
+                       <td>/users/:Username/movies/:movieId</td>
                        <td>DELETE</td>
-                       <td>:movieTitle</td>
+                       <td>:Username, :MovieID</td>
                        <td>-</td>
-                       <td>A text message indicating whether the Movie was removed</td>
+                       <td>A JSON Object holding data about the User and the movie that was removed</td>
                    </tr>
           
                    <tr>
                        <td>Allow existing users to deregister</td>
-                       <td>/users/:id</td>
+                       <td>/users/:Username</td>
                        <td>DELETE</td>
-                       <td>:movieTitle</td>
+                       <td>:Username</td>
                        <td>-</td>
                        <td>A text message indicating whether the User has deregistered</td>
                    </tr>
