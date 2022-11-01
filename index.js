@@ -1,14 +1,3 @@
-/*const bodyParser = require('body-parser');
-const express = require('express');
-    app = express();
-    bodyParser = require('body-parser'),
-    uuid = require('uuid');
-    morgan = require('morgan');
-
-    //fs = require('fs'), // import built in node modules fs and path 
-    //path = require('path');
-
-//const app = express();*/
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
@@ -22,137 +11,24 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true });
-
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
+
+app.use(morgan('common', {stream: accessLogStream}));
+app.use(express.static('public'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/*let users = [
-  {
-    id: 1,
-    name: "Max",
-    favoriteMovies: []
-  },
-  {
-    id: 2,
-    name: "Jane",
-    favoriteMovies: ["The Dark Knight"]
-  },
-];
+let auth = require('./auth')(app);
+const passport = require('passport');
+require('./passport');
 
-let movies = [
-  {
-    "Title": "xxx",
-    "Description": "",
-    "Genre": {
-      "Name": "Drama",
-      "Description":"."
-    },
-    "Director":{
-      "Name":"",
-      "Bio":"",
-      "Birth":1970,
-    },
-    "ImageURL":"",
-    "Featured": false
-  },
-  {
-    "Title": "yyy",
-    "Description": "",
-    "Genre": {
-      "Name": "",
-      "Description":""
-    },
-    "Director":{
-      "Name":"",
-      "Bio":"",
-      "Birth":1970,
-    },
-    "ImageURL":"",
-    "Featured": false
-  },
-  {
-    "Title": "The Dark Knight",
-    "Description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-    "Genre": {
-      "Name": "Action",
-      "Description":"Action film is a film genre in which the protagonist is thrust into a series of events that typically involve violence and physical feats. The genre tends to feature a mostly resourceful hero struggling against incredible odds, which include life-threatening situations, a dangerous villain, or a pursuit which usually concludes in victory for the hero."
-    },
-    "Director":{
-      "Name":"Christopher Nolan",
-      "Bio":"Over the course of 15 years of filmmaking, Nolan has gone from low-budget independent films to working on some of the biggest blockbusters ever made",
-      "Birth":1970,
-    },
-    "ImageURL":"https://upload.wikimedia.org/wikipedia/commons/9/95/Christopher_Nolan_Cannes_2018.jpg",
-    "Featured": false
-  },
-];
-
-let topTenMovies = [
-    {
-      title: 'The Shawshank Redemption',
-      author: 'Frank Darabont'
-    },
-    {
-      title: 'The Godfather',
-      author: 'Francis Ford Coppola'
-    },
-    {
-      title: 'The Dark Knight',
-      author: 'Christopher Nolan'
-    },
-    {
-        title: 'The Godfather: Part II',
-        author: 'Francis Ford Coppola'
-    },
-    {
-        title: '12 Angry Men',
-        author: 'Sidney Lumet'
-    },
-    {
-        title: 'Schindler\'s List',
-        author: 'Steven Spielberg'
-    },
-    {
-        title: 'The Lord of the Rings: The Return of the King',
-        author: 'Peter Jackson'
-    },
-    {
-        title: 'Pulp Fiction',
-        author: 'Quentin Tarantino'
-    },
-    {
-        title: 'The Lord of the Rings: The Fellowship of the Ring',
-        author: 'Peter Jackson'
-    },
-    {
-        title: 'The Good, the Bad and the Ugly',
-        author: 'Sergio Leone'
-    }
-  ];*/
-
-  app.use(morgan('common', {stream: accessLogStream}));
-  app.use(express.static('public'));
+mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true });
 
   // GET requests
   app.get('/', (req, res) => {
     res.send('Welcome to my movie API!');
   });
-
-  //CREATE
-  /*app.post('/users', (req, res) => {
-    const newUser = req.body;
-
-    if (newUser.name) {
-      newUser.id = uuid.v4();
-      users.push(newUser);
-      res.status(201).json(newUser)
-    } else{
-      res.status(400).send('users need names')
-    }
-  });*/
 
 //Add a user
 /* We’ll expect JSON in this format
@@ -167,7 +43,7 @@ app.post('/users', (req, res) => {
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
-        return res.status(400).send(req.body.Username + 'already exists');
+        return res.status(400).send(req.body.Username + ' already exists');
       } else {
         Users
           .create({
@@ -190,7 +66,7 @@ app.post('/users', (req, res) => {
 });
 
 // Get all users
-app.get('/users', (req, res) => {
+app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.find()
     .then((users) => {
       res.status(201).json(users);
@@ -202,7 +78,7 @@ app.get('/users', (req, res) => {
 });
 
 // Get a user by username
-app.get('/users/:Username', (req, res) => {
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ Username: req.params.Username })
     .then((user) => {
       res.json(user);
@@ -239,7 +115,7 @@ app.get('/users/:Username', (req, res) => {
   (required)
   Birthday: Date
 }*/
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
@@ -275,7 +151,7 @@ app.put('/users/:Username', (req, res) => {
     });*/
 
   // Add a movie to a user's list of favorites
-app.post('/users/:Username/movies/:MovieID', (req, res) => {
+app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, {
      $push: { FavoriteMovies: req.params.MovieID }
    },
@@ -305,7 +181,7 @@ app.post('/users/:Username/movies/:MovieID', (req, res) => {
     });*/
 
 // DELETE a movie to a user's list of favorites
-app.delete('/users/:Username/movies/:MovieID', (req, res) => {
+app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, {
      $pull: { FavoriteMovies: req.params.MovieID }
    },
@@ -336,7 +212,7 @@ app.delete('/users/:Username/movies/:MovieID', (req, res) => {
     });*/
 
 // Delete a user by username
-app.delete('/users/:Username', (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
       if (!user) {
@@ -359,16 +235,16 @@ app.delete('/users/:Username', (req, res) => {
   });*/
 
 // Get all movies
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.find()
     .then((movies) => {
-      res.status(200).json(movies);
+      res.status(201).json(movies);
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
     });
-});  
+});
 
   // READ movies by title
   /*app.get('/movies/:title', (req, res) => {
@@ -384,7 +260,7 @@ app.get('/movies', (req, res) => {
   });*/
 
 // Get a movie by title
-app.get('/movies/:Title', (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.json(movie);
@@ -409,7 +285,7 @@ app.get('/movies/:Title', (req, res) => {
     });*/
 
 // Get a Movie by Genre
-app.get('/movies/genre/:genreName', (req, res) => {
+app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ 'Genre.Name': req.params.genreName })
     .then((movie) => {
       res.json(movie.Genre);
@@ -433,7 +309,7 @@ app.get('/movies/genre/:genreName', (req, res) => {
       });*/
 
 // Get a Movie by Director
-app.get('/movies/directors/:directorName', (req, res) => {
+app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ 'Director.Name': req.params.directorName })
     .then((movie) => {
       res.json(movie.Director);
