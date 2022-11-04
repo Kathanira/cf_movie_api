@@ -1,39 +1,45 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const { default: mongoose } = require("mongoose");
 
 let movieSchema = mongoose.Schema({
-  Title: { type: String, required: true},
-  Description: { type: String, required: true},
-  Genre: {
-    Name: String,
-    Description: String
-  },
-  Director: {
-    Name: String,
-    Bio: String
-  },
-  Actors: [String],
-  ImagePath: String,
-  Featured: Boolean
+    Title: {type: String, required: true},
+    Description: {type: String, required: true},
+    Genre: {
+        Name: String,
+        Description: String
+    },
+    Director: {
+        Name: String,
+        Bio: String
+    },
+    Actors: [String],
+    ImagePath: String,
+    Feautured: Boolean
 });
+
+const bcrypt = require('bcrypt');
+/*let userSchema = mongoose.Schema({
+    Username: {type: String, required: true},
+    Password: {type: String, required: true},
+    Email: {type: String, required: true},
+    Birthday: Date,
+    FavoriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}]
+});*/
 
 let userSchema = mongoose.Schema({
-  Username: { type: String, required: true },
-  Password: { type: String, required: true },
-  Email: { type: String, required: true },
-  Birthday: Date,
-  FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}]
-});
-
-// this is what does the actual hashing of submitted passwords.
-userSchema.statics.hashPassword = (password) => {
-  return bcrypt.hashSync(password, 10);
-};
-
-// this is what compares the submitted hashed passwords with the hashed passwords stored in the database.
-userSchema.methods.validatePassword = function(password) { // don't use arrow function when defining instance methods
-  return bcrypt.compareSync(password, this.Password);
-};
+    Username: {type: String, required: true},
+    Password: {type: String, required: true},
+    Email: {type: String, required: true},
+    Birthday: Date,
+    FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
+  });
+  
+  userSchema.statics.hashPassword = (password) => {
+    return bcrypt.hashSync(password, 10);
+  };
+  
+  userSchema.methods.validatePassword = function(password) {
+    return bcrypt.compareSync(password, this.Password);
+  };
 
 let Movie = mongoose.model('Movie', movieSchema);
 let User = mongoose.model('User', userSchema);
