@@ -1,50 +1,37 @@
-const express = require("express");
+const express = require('express'),
+bodyParser = require('body-parser'),
+uuid = require('uuid'),
+morgan = require('morgan'),
+fs = require('fs'),
+path = require('path');
+
 const app = express();
-
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
-
-const uuid = require("uuid");
-const { check, validationResult } = require('express-validator');
-
-const fs = require("fs");
-const path = require("path");
 const mongoose = require('mongoose');
 const Models = require('./models.js');
-
+const { check, validationResult } = require('express-validator');
 
 const Movies = Models.Movie;
 const Users = Models.User;
 
+
 //mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
-
 app.use(bodyParser.json());
-app.use(morgan('common', {stream: accessLogStream}));
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require('cors');
 app.use(cors());
-/*
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
-      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-      return callback(new Error(message ), false);
-    }
-    return callback(null, true);
-  }
-}));*/
+require('./auth')(app);
 
-let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
+
+//fs.createWriteStream is used to create a write stream while path.join appends it to log,txt file
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
+app.use(morgan('common', {stream: accessLogStream}));
+app.use(express.static('public'));
 
 // GET requests
 app.get('/', (req, res) => {
@@ -256,29 +243,26 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
 });
 
 
-app.use(express.static('public'));
+//app.use(express.static('public'));
 
-/*app.get('/documentation', (req, res) => {                  
-  res.sendFile('public/documentation.html', { root: __dirname });
-});*/
+app.get('/documentation', (req, res) => {
+  res.sendFile('public/documentation.html', {root: __dirname});
+});
 
-
-
-// Error 
+//error handling middleware function
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('There was an error. Please try again later.');
+  res.status(500).send('Something broke!')
 });
 
-// listen for requests
-/*app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
-});*/
-
-const port = process.env.PORT || 8080;
-app.listen(port, '0.0.0.0',() => {
-console.log('Listening on Port ' + port);
+ const port = process.env.PORT || 8080;
+ app.listen(port, '0.0.0.0',  () => {
+   console.log('Listening on Port ' + port);
 });
+
+// app.listen(8080, () => {
+//   console.log('ypur app is listening on port 8080.');
+// })
 
 
 

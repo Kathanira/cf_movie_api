@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { Schema } = mongoose;
+//const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
 
 let movieSchema = mongoose.Schema({
