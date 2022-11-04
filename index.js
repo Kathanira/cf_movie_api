@@ -40,7 +40,9 @@ let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true });
+
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
   // GET requests
   app.get('/', (req, res) => {
@@ -439,7 +441,7 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', { sessio
   /*app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
   });*/
-  
+
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
