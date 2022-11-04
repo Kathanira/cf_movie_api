@@ -12,8 +12,7 @@ const { check, validationResult } = require('express-validator');
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const Genres = Models.Genre;
-const Directors = Models.Director;
+
 
 // This allows mongoose connect to the database so it can perform CRUD operations . the 'test' is the name of the database created
 // for local database
