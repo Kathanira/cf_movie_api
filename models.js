@@ -1,4 +1,6 @@
 const { default: mongoose } = require("mongoose");
+const { Schema } = mongoose;
+const bcrypt = require('bcrypt');
 
 let movieSchema = mongoose.Schema({
     Title: {type: String, required: true},
@@ -16,14 +18,6 @@ let movieSchema = mongoose.Schema({
     Feautured: Boolean
 });
 
-const bcrypt = require('bcrypt');
-/*let userSchema = mongoose.Schema({
-    Username: {type: String, required: true},
-    Password: {type: String, required: true},
-    Email: {type: String, required: true},
-    Birthday: Date,
-    FavoriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}]
-});*/
 
 let userSchema = mongoose.Schema({
     Username: {type: String, required: true},
