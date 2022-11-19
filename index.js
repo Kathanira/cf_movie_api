@@ -102,8 +102,8 @@ app.get('/movies/directors/:Name', passport.authenticate('jwt', { session: false
 });
 
 // Get all user (Read in Mongoose)
-//app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
-  app.get("/users", function (req, res) {
+app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+  //app.get("/users", function (req, res) {
   Users.find()
   .then((users) => {
     res.status(200).json(users);
