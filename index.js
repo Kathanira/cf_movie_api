@@ -20,13 +20,30 @@ const Directors = Models.Director;
 //mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
 
 //for online database process.env.Variable name ro secure connection URI
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.CONNECTION_URI, { 
+  useNewUrlParser: true, useUnifiedTopology: true})
+  .then( console.log('DB Connected') );
+
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); //bodyParser middle ware function
 
 const cors = require('cors');
-app.use(cors());//This specifies that the app uses cors and by default it will set the application to allow requests from all origins
+//app.use(cors());//This specifies that the app uses cors and by default it will set the application to allow requests from all origins
+// CORS //////////
+// cross-origin resource sharing eg. accepting requests from  the frontend
+let allowedOrigins = ['http://localhost:1234'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1) { // if the origin isn't found in allowedOrigins
+      let message = 'The CORS policy for this application does not allow access from origin ' + origin;
+      return callback(new Error(message), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 require('./auth')(app); // to import auth.js file... the (app) argument is to ensure Express is available in the auth.js file as well
 
