@@ -33,7 +33,7 @@ const cors = require('cors');
 //app.use(cors());//This specifies that the app uses cors and by default it will set the application to allow requests from all origins
 // CORS //////////
 // cross-origin resource sharing eg. accepting requests from  the frontend
-let allowedOrigins = ['http://localhost:1234'];
+let allowedOrigins = ['http://localhost:1234', 'http://localhost:50457'];
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
