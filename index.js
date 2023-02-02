@@ -33,7 +33,18 @@ const cors = require('cors');
 //app.use(cors());//This specifies that the app uses cors and by default it will set the application to allow requests from all origins
 // CORS //////////
 // cross-origin resource sharing eg. accepting requests from  the frontend
-let allowedOrigins = ['http://localhost:1234', 'http://localhost:50457', 'http://localhost:51693', 'https://myflix-firstmovieapp.herokuapp.com/', 'https://test-myflix.onrender.com/', 'https://myflix-website.onrender.com', 'https://kathanira.github.io/myFlix-Angular-client/welcome', 'https://kathanira.github.io', 'http://localhost:4200'];
+let allowedOrigins = 
+['http://localhost:1234', 
+'ANGULAR_LOCAL_APP',
+'http://localhost:50457', 
+'http://localhost:51693', 
+'https://myflix-firstmovieapp.herokuapp.com/', 
+'https://test-myflix.onrender.com/', 
+'https://myflix-website.onrender.com', 
+'https://kathanira.github.io/myFlix-Angular-client/welcome', 
+'https://kathanira.github.io', 'http://localhost:4200'];
+
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
